@@ -3,7 +3,6 @@ package com.example.zzacn.imagetest;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,9 +17,9 @@ import java.util.ArrayList;
 
 public class Main2Activity extends AppCompatActivity implements View.OnClickListener {
 
-    final int REQUEST_CAMERA_CAPTURE = 110, result = 111;
+    final int REQUEST_CAMERA_CAPTURE = 110, banner = 111, details1 = 112, details2 = 113;
     public static ArrayList<Bitmap> bitmapArrayList = new ArrayList<>();
-    ImageView imgView;
+    ImageView imgView, imgView2, imgView3;
     Button btnPassBitmapArray;
 
     @Override
@@ -29,9 +28,13 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_main2);
 
         imgView = findViewById(R.id.imageView);
+        imgView2 = findViewById(R.id.imageView2);
+        imgView3 = findViewById(R.id.imageView3);
         btnPassBitmapArray = findViewById(R.id.button2);
 
         imgView.setOnClickListener(this);
+        imgView2.setOnClickListener(this);
+        imgView3.setOnClickListener(this);
 
         btnPassBitmapArray.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,13 +53,40 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         }
 
         switch (requestCode){
-            case result:
+            case banner:
                 if (resultCode == RESULT_OK) {
                     Uri uri = data.getData();
                     Bitmap bitmap;
                     try {
                         bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                         imgView.setImageBitmap(bitmap);
+                        bitmapArrayList.add(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            case details1:
+                if (resultCode == RESULT_OK) {
+                    Uri uri = data.getData();
+                    Bitmap bitmap;
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                        imgView2.setImageBitmap(bitmap);
+                        bitmapArrayList.add(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+
+            case details2:
+                if (resultCode == RESULT_OK) {
+                    Uri uri = data.getData();
+                    Bitmap bitmap;
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                        imgView3.setImageBitmap(bitmap);
                         bitmapArrayList.add(bitmap);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -77,17 +107,6 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
 
     String mCurrentPhotoPath;
 
-    private File createImageFile() throws IOException {
-        File storageDir = Environment.getExternalStorageDirectory();
-        File image = File.createTempFile(
-                "example",  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
     private void galleryAddPic() {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(mCurrentPhotoPath);
@@ -100,7 +119,13 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.imageView:
-                PickImageFromGallery(result);
+                PickImageFromGallery(banner);
+                break;
+            case R.id.imageView2:
+                PickImageFromGallery(details1);
+                break;
+            case R.id.imageView3:
+                PickImageFromGallery(details2);
                 break;
         }
     }
